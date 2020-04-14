@@ -62,5 +62,4 @@ class CheckoutActivity : AppCompatActivity(), LocationListener {
     override fun onProviderDisabled(p0: String?) {
         print(p0)
     }
-
 }

@@ -5,10 +5,13 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
+import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.obsoft.inci2019.models.CartStore
 import com.obsoft.inci2019.models.Item
+import com.obsoft.inci2019.models.RemoteServices
+import java.net.URL
 
 class ItemsAdapter(internal var dataSet: List<Item>) : RecyclerView.Adapter<ItemsAdapter.ItemViewHolder>() {
     class ItemViewHolder(val cellView:View) : RecyclerView.ViewHolder(cellView)
@@ -16,7 +19,7 @@ class ItemsAdapter(internal var dataSet: List<Item>) : RecyclerView.Adapter<Item
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ItemViewHolder {
         val cellView = LayoutInflater.from(parent.context).inflate(R.layout.viewholder_item, parent, false) as View
         val itemViewHolder = ItemViewHolder(cellView)
-        cellView.findViewById<Button>(R.id.btn_removefromcart).setOnClickListener {
+        cellView.findViewById<Button>(R.id.btn_addtocart).setOnClickListener {
             val pos = itemViewHolder.adapterPosition
             val item = dataSet[pos]
             CartStore.addItem(item)
@@ -33,13 +36,15 @@ class ItemsAdapter(internal var dataSet: List<Item>) : RecyclerView.Adapter<Item
     }
 
     override fun onBindViewHolder(holder: ItemViewHolder, position: Int) {
-        val titleView = holder.cellView.findViewById<TextView>(R.id.cartitem_title)
-        val priceView = holder.cellView.findViewById<TextView>(R.id.cartitem_price)
+        val titleView = holder.cellView.findViewById<TextView>(R.id.item_title)
+        val priceView = holder.cellView.findViewById<TextView>(R.id.item_price)
+        val imageView = holder.cellView.findViewById<ImageView>(R.id.item_image)
         val index = position
         val item = dataSet[index]
 
         titleView.text = item.title
         priceView.text = item.price.toString()
+        RemoteServices.getImage(item.imageURL, imageView)
     }
 
     override fun getItemCount(): Int = dataSet.size

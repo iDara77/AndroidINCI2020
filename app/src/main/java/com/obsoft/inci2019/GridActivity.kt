@@ -1,26 +1,32 @@
 package com.obsoft.inci2019
 
+import android.content.BroadcastReceiver
+import android.content.Context
 import android.content.Intent
-import androidx.appcompat.app.AppCompatActivity
+import android.content.IntentFilter
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
-import android.widget.*
+import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.SearchView
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.obsoft.inci2019.models.Item
 import com.obsoft.inci2019.models.ItemsStore
 
 class GridActivity : AppCompatActivity() {
     private var recyclerView:RecyclerView? = null
-    private var recyclerAdapter:ItemsAdapter? = null
-    private var itemsList = ItemsStore.getList()
+        private var recyclerAdapter:ItemsAdapter? = null
+    private lateinit var itemsList:List<Item>
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_grid)
         setSupportActionBar(findViewById(R.id.main_toolbar))
 
+        configureReceiver()
+        itemsList = ItemsStore.getList(this)
         recyclerView = findViewById<RecyclerView>(R.id.cartItemsGrid)
         var recyclerLayout = GridLayoutManager(this, 2)
         recyclerAdapter = ItemsAdapter(itemsList)
@@ -59,8 +65,26 @@ class GridActivity : AppCompatActivity() {
             true
         }
 
-        R.id.action_favorite -> {
+        R.id.action_web -> {
+            val intent = Intent(this, WebActivity::class.java)
+            startActivity(intent)
+            true
+        }
+
+        R.id.action_cart -> {
             val intent = Intent(this, CartActivity::class.java)
+            startActivity(intent)
+            true
+        }
+
+        R.id.action_favorites -> {
+            val intent = Intent(this, ProfileActivity::class.java)
+            startActivity(intent)
+            true
+        }
+
+        R.id.action_profile -> {
+            val intent = Intent(this, ProfileActivity::class.java)
             startActivity(intent)
             true
         }
@@ -77,4 +101,18 @@ class GridActivity : AppCompatActivity() {
         recyclerAdapter!!.updateData(itemsList)
     }
 
+    private fun configureReceiver() {
+        val filter = IntentFilter()
+        filter.addAction(ItemsStore.ItemsLoadedAction)
+        val receiver = GridActivityBroadcastReceiver()
+        registerReceiver(receiver, filter)
+    }
+
+    inner class GridActivityBroadcastReceiver: BroadcastReceiver() {
+        override fun onReceive(p0: Context?, p1: Intent?) {
+
+            itemsList = ItemsStore.getList()
+            recyclerAdapter!!.updateData(itemsList)
+        }
+    }
 }

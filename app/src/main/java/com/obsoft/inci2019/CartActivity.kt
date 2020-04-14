@@ -1,7 +1,6 @@
 package com.obsoft.inci2019
 
 import android.content.Intent
-import android.location.LocationListener
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
@@ -72,7 +71,15 @@ class CartActivity : AppCompatActivity() {
             true
         }
 
-        R.id.action_favorite -> {
+        R.id.action_cart -> {
+            val intent = Intent(this, CartActivity::class.java)
+            startActivity(intent)
+            true
+        }
+
+        R.id.action_profile -> {
+            val intent = Intent(this, ProfileActivity::class.java)
+            startActivity(intent)
             true
         }
 
