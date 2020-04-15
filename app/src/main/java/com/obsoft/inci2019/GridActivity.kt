@@ -14,6 +14,7 @@ import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.obsoft.inci2019.models.Item
 import com.obsoft.inci2019.models.ItemsStore
+import com.obsoft.inci2019.models.RemoteServices
 
 class GridActivity : AppCompatActivity() {
     private var recyclerView:RecyclerView? = null
