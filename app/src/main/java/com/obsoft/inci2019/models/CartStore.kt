@@ -13,7 +13,8 @@ object CartStore : RemoteServicesHandler {
     enum class Action(val actionName: String, val handlerId: Int) {
         ItemsLoaded("com.obsoft.inci2019.cart.itemLoaded", 1),
         ItemAdded("com.obsoft.inci2019.cart.itemAdded", 2),
-        ItemRemoved("com.obsoft.inci2019.cart.itemRemoved", 3)
+        ItemRemoved("com.obsoft.inci2019.cart.itemRemoved", 3),
+        ItemUpdated("com.obsoft.inci2019.cart.itemUpdated", 4)
     }
 
     fun addItem(item:Item, context: Context? = null, callerId: Int=0) : Boolean {
@@ -22,9 +23,10 @@ object CartStore : RemoteServicesHandler {
         RemoteServices.post("https://5e8c8b85e61fbd00164aedcb.mockapi.io/api/v1/Cart", d,this, callerId, CartStore.Action.ItemAdded.handlerId)
         return true
     }
-    fun removeItem(index: Int) : Boolean {
+    fun removeItem(itemIndex:Int, context: Context? = null, callerId: Int=0) : Boolean {
+        val item = list[itemIndex]
         this.context = context
-        list -= list[index]
+        RemoteServices.delete("https://5e8c8b85e61fbd00164aedcb.mockapi.io/api/v1/Cart/"+item.id, null,this, callerId, CartStore.Action.ItemRemoved.handlerId)
         return true
     }
 
@@ -44,10 +46,12 @@ object CartStore : RemoteServicesHandler {
         if (CartStore.Action.ItemAdded.handlerId == handlerId) {
             list += parseItem(data)
             action = CartStore.Action.ItemAdded.actionName
+        } else if (CartStore.Action.ItemRemoved.handlerId == handlerId) {
+            list -= parseItem(data)
+            action = CartStore.Action.ItemRemoved.actionName
         } else {
             action = ""
         }
-
         Intent().also {
             it.setAction(action)
             it.putExtra("callerId", callerId)

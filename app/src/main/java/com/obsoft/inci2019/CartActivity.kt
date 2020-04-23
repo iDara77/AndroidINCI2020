@@ -1,6 +1,9 @@
 package com.obsoft.inci2019
 
+import android.content.BroadcastReceiver
+import android.content.Context
 import android.content.Intent
+import android.content.IntentFilter
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
@@ -11,6 +14,7 @@ import androidx.appcompat.widget.SearchView
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.obsoft.inci2019.models.CartStore
+import com.obsoft.inci2019.models.ItemsStore
 
 
 class CartActivity : AppCompatActivity() {
@@ -24,6 +28,7 @@ class CartActivity : AppCompatActivity() {
         setContentView(R.layout.activity_cart)
         setSupportActionBar(findViewById(R.id.main_toolbar))
 
+        configureReceiver()
         recyclerView = findViewById<RecyclerView>(R.id.cartItemsGrid)
         var recyclerLayout = LinearLayoutManager(this)
         recyclerAdapter = CartItemsAdapter(itemsList)
@@ -93,6 +98,22 @@ class CartActivity : AppCompatActivity() {
     private fun filterItemsByTitle(title: String) {
         itemsList = CartStore.findItemsByName(title)
         recyclerAdapter!!.updateData(itemsList)
+    }
+
+    private fun configureReceiver() {
+        val filter = IntentFilter()
+        filter.addAction(CartStore.Action.ItemRemoved.actionName)
+        val receiver = CartActivityBroadcastReceiver()
+        registerReceiver(receiver, filter)
+    }
+
+    inner class CartActivityBroadcastReceiver: BroadcastReceiver() {
+        override fun onReceive(p0: Context?, p1: Intent?) {
+            if (p1!!.action == CartStore.Action.ItemRemoved.actionName ) {
+                itemsList = CartStore.getList()
+                recyclerAdapter!!.updateData(itemsList)
+            }
+        }
     }
 
 }

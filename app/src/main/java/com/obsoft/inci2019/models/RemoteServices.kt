@@ -28,8 +28,8 @@ object RemoteServices {
 
     }
 
-    fun delete() {
-
+    fun delete(uri:String, data: Map<String, String>?, handler: RemoteServicesHandler, callerId: Int,handlerId: Int) {
+        this.execute("DELETE",uri, handler, callerId,handlerId,data)
     }
 
     fun getImage(uri: String, imgView: ImageView) {

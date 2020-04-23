@@ -10,17 +10,18 @@ import java.util.*
 
 object ItemsStore : RemoteServicesHandler {
     val ItemsLoadedAction = "com.obsoft.inci2019.itemsLoaded"
+    val ItemsLoadedHandlerId = 1
 
     private var list:List<Item> = listOf()
     override var context:Context? = null
 
-    fun loadItems(context: Context? = null, callerId: Int=0, handlerId: Int=0) {
+    fun loadItems(context: Context? = null, callerId: Int=0) {
         this.context = context
-        RemoteServices.get("https://5e8c8b85e61fbd00164aedcb.mockapi.io/api/v1/Product", this, callerId, handlerId)
+        RemoteServices.get("https://5e8c8b85e61fbd00164aedcb.mockapi.io/api/v1/Product", this, callerId, ItemsLoadedHandlerId)
 
     }
 
-    fun getList(context: Context? = null, callerId: Int=0, handlerId: Int=0) : List<Item> {
+    fun getList(context: Context? = null, callerId: Int=0) : List<Item> {
         if(list.isEmpty()) {
             this.loadItems(context, callerId)
         }

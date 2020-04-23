@@ -19,8 +19,8 @@ class CartItemsAdapter(internal var dataSet: List<CartItem>) : RecyclerView.Adap
         val itemViewHolder = CartItemViewHolder(cellView)
         cellView.findViewById<Button>(R.id.btn_removefromcart).setOnClickListener {
             val pos = itemViewHolder.adapterPosition
-            CartStore.removeItem(pos)
-            dataSet = CartStore.getList()
+            CartStore.removeItem(pos,parent.context)
+            dataSet = CartStore.getList(parent.context)
             notifyDataSetChanged()
         }
 

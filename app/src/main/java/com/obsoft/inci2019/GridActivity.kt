@@ -12,6 +12,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.SearchView
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.obsoft.inci2019.models.CartStore
 import com.obsoft.inci2019.models.Item
 import com.obsoft.inci2019.models.ItemsStore
 import com.obsoft.inci2019.models.RemoteServices
@@ -111,9 +112,12 @@ class GridActivity : AppCompatActivity() {
 
     inner class GridActivityBroadcastReceiver: BroadcastReceiver() {
         override fun onReceive(p0: Context?, p1: Intent?) {
-
-            itemsList = ItemsStore.getList()
-            recyclerAdapter!!.updateData(itemsList)
+            if (p1!!.action == ItemsStore.ItemsLoadedAction ) {
+                itemsList = ItemsStore.getList()
+                recyclerAdapter!!.updateData(itemsList)
+            } else if (p1!!.action == CartStore.Action.ItemAdded.actionName) {
+                Toast.makeText(p0, "Item Added", Toast.LENGTH_LONG).show()
+            }
         }
     }
 }
