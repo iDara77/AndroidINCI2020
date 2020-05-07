@@ -17,21 +17,26 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.AppCompat.Light.NoActionBar">
-        <activity android:name=".WebActivity"></activity>
-        <activity android:name=".ProfileActivity" />
         <activity
-            android:name=".CheckoutActivity"
-            android:label="@string/title_activity_checkout"
-            android:theme="@style/NoActionBar" />
-        <activity android:name=".GridActivity">
+            android:name=".MainTabbedActivity"
+            android:label="@string/title_activity_fragment"
+            android:theme="@style/NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity android:name=".WebActivity" />
+        <activity android:name=".ProfileActivity" />
+        <activity
+            android:name=".CheckoutActivity"
+            android:label="@string/title_activity_checkout"
+            android:theme="@style/NoActionBar" />
+        <activity android:name=".GridActivity" />
         <activity android:name=".MainActivity" />
         <activity android:name=".CartActivity" />
+
         <provider
             android:name="androidx.core.content.FileProvider"
             android:authorities="com.obsoft.inci2019.fileprovider"
@@ -39,7 +44,7 @@
             android:grantUriPermissions="true">
             <meta-data
                 android:name="android.support.FILE_PROVIDER_PATHS"
-                android:resource="@xml/file_paths"></meta-data>
+                android:resource="@xml/file_paths" />
         </provider>
     </application>
 

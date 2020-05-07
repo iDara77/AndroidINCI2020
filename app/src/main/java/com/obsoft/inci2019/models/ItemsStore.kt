@@ -46,7 +46,8 @@ object ItemsStore : RemoteServicesHandler {
             it.setAction(this.ItemsLoadedAction)
             it.putExtra("callerId", callerId)
             if(this.context != null)
-                this.context!!.sendBroadcast(it)
+//                this.context!!.sendBroadcast(it)
+                LocalBroadcastManager.getInstance(this.context!!).sendBroadcast(it)
         }
 
 

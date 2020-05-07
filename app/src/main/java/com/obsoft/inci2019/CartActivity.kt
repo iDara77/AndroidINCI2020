@@ -103,13 +103,14 @@ class CartActivity : AppCompatActivity() {
     private fun configureReceiver() {
         val filter = IntentFilter()
         filter.addAction(CartStore.Action.ItemRemoved.actionName)
+        filter.addAction(CartStore.Action.ItemUpdated.actionName)
         val receiver = CartActivityBroadcastReceiver()
         registerReceiver(receiver, filter)
     }
 
     inner class CartActivityBroadcastReceiver: BroadcastReceiver() {
         override fun onReceive(p0: Context?, p1: Intent?) {
-            if (p1!!.action == CartStore.Action.ItemRemoved.actionName ) {
+            if (p1!!.action == CartStore.Action.ItemRemoved.actionName || p1!!.action == CartStore.Action.ItemUpdated.actionName) {
                 itemsList = CartStore.getList()
                 recyclerAdapter!!.updateData(itemsList)
             }

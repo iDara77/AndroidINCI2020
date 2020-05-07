@@ -23,6 +23,14 @@ class CartItemsAdapter(internal var dataSet: List<CartItem>) : RecyclerView.Adap
             dataSet = CartStore.getList(parent.context)
             notifyDataSetChanged()
         }
+        cellView.findViewById<Button>(R.id.btn_qty_inc).setOnClickListener {
+            val pos = itemViewHolder.adapterPosition
+            CartStore.updateItemQty(pos,+1,parent.context)
+        }
+        cellView.findViewById<Button>(R.id.btn_qty_dec).setOnClickListener {
+            val pos = itemViewHolder.adapterPosition
+            CartStore.updateItemQty(pos,-1,parent.context)
+        }
 
         cellView.setOnClickListener {
             val intent = Intent(parent.context, MainActivity::class.java)

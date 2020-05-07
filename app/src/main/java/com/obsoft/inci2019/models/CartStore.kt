@@ -29,12 +29,24 @@ object CartStore : RemoteServicesHandler {
         RemoteServices.delete("https://5e8c8b85e61fbd00164aedcb.mockapi.io/api/v1/Cart/"+item.id, null,this, callerId, CartStore.Action.ItemRemoved.handlerId)
         return true
     }
+    fun updateItemQty(itemIndex: Int, qty: Int, context: Context? = null, callerId: Int=0) : Boolean {
+        val item = list[itemIndex]
+        this.context = context
+        val d = mapOf("qty" to (item.qty+qty).toString())
+        RemoteServices.put("https://5e8c8b85e61fbd00164aedcb.mockapi.io/api/v1/Cart/"+item.id, d,this, callerId, CartStore.Action.ItemUpdated.handlerId)
+        return true
+    }
 
     fun getList(context: Context? = null, callerId: Int=0) : List<CartItem> {
         this.context = context
         return list
     }
 
+    fun findItemById(id: Int) : CartItem {
+        return list.filter {
+            it.id == id
+        }[0]
+    }
     fun findItemsByName(title: String) : List<CartItem> {
         return list.filter {
             it.item.title.contains(title, ignoreCase = true)
@@ -49,6 +61,11 @@ object CartStore : RemoteServicesHandler {
         } else if (CartStore.Action.ItemRemoved.handlerId == handlerId) {
             list -= parseItem(data)
             action = CartStore.Action.ItemRemoved.actionName
+        } else if (CartStore.Action.ItemUpdated.handlerId == handlerId) {
+            val item = parseItem(data)
+            val cItem = findItemById(item.id)
+            cItem.qty = item.qty
+            action = CartStore.Action.ItemUpdated.actionName
         } else {
             action = ""
         }

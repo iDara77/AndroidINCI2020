@@ -24,7 +24,8 @@ object RemoteServices {
 
     }
 
-    fun put() {
+    fun put(uri:String, data: Map<String, String>?, handler: RemoteServicesHandler, callerId: Int,handlerId: Int) {
+        this.execute("PUT",uri, handler, callerId,handlerId,data)
 
     }
 

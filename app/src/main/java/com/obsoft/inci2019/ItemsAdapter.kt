@@ -22,7 +22,7 @@ class ItemsAdapter(internal var dataSet: List<Item>) : RecyclerView.Adapter<Item
         cellView.findViewById<Button>(R.id.btn_addtocart).setOnClickListener {
             val pos = itemViewHolder.adapterPosition
             val item = dataSet[pos]
-            CartStore.addItem(item)
+            CartStore.addItem(item, parent.context)
         }
 
         cellView.setOnClickListener {

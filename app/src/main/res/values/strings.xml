@@ -9,4 +9,5 @@
     <string name="action_web">Web</string>
     <string name="action_favorites">Favorites</string>
     <string name="action_profile">Profile</string>
+    <string name="title_activity_fragment">FragmentActivity</string>
 </resources>

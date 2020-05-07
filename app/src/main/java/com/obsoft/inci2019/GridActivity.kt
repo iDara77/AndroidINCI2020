@@ -19,7 +19,7 @@ import com.obsoft.inci2019.models.RemoteServices
 
 class GridActivity : AppCompatActivity() {
     private var recyclerView:RecyclerView? = null
-        private var recyclerAdapter:ItemsAdapter? = null
+    private var recyclerAdapter:ItemsAdapter? = null
     private lateinit var itemsList:List<Item>
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -106,6 +106,7 @@ class GridActivity : AppCompatActivity() {
     private fun configureReceiver() {
         val filter = IntentFilter()
         filter.addAction(ItemsStore.ItemsLoadedAction)
+        filter.addAction(CartStore.Action.ItemAdded.actionName)
         val receiver = GridActivityBroadcastReceiver()
         registerReceiver(receiver, filter)
     }
