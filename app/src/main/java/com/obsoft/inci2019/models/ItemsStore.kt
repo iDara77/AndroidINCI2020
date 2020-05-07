@@ -39,6 +39,13 @@ object ItemsStore : RemoteServicesHandler {
             it.id == id
         }[0]
     }
+    fun find(id: Int) : Item? {
+        val res = list.filter {
+            it.id == id
+        }
+        if (res.count() > 0) return res[0]
+        else return null
+    }
 
     override fun onFinishLoading(data: String, callerId: Int, handlerId: Int) {
         updateList(data)

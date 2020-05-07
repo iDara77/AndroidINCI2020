@@ -7,30 +7,23 @@ import androidx.fragment.app.FragmentActivity
 import androidx.viewpager2.adapter.FragmentStateAdapter
 
 class FragmentAdapter(activity: FragmentActivity) : FragmentStateAdapter(activity) {
-
-    private  var fragments: List<Fragment> = listOf()
-
-    override fun getItemCount(): Int = 4
+    enum class TabTitles(val label: String, val drawable: Int) {
+        SHOP("Shop", R.drawable.ic_explore_black),
+        CART("Cart", R.drawable.ic_shopping_cart_black)
+    }
+    override fun getItemCount(): Int = 2
 
     override fun createFragment(position: Int): Fragment {
         val fragment:Fragment
         if (position == 0) {
             fragment = ItemsGridFragment()
         } else if (position == 1) {
-            fragment = ItemsGridFragment()
-        } else if (position == 2) {
-            fragment = ItemsGridFragment()
-        } else if (position == 3) {
-            fragment = ItemsGridFragment()
+            fragment = CartGridFragment()
         }  else {
             throw Exception("Give me a Fragment")
         }
 
-//        fragments += fragment
         return fragment
     }
 
-    fun handleBroadcast(p0: Context?, p1: Intent?) {
-
-    }
 }

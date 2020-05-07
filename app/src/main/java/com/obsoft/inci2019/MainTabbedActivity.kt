@@ -10,6 +10,7 @@ import com.google.android.material.snackbar.Snackbar
 import androidx.appcompat.app.AppCompatActivity
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.viewpager2.widget.ViewPager2
+import com.google.android.material.badge.BadgeDrawable
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
 import com.obsoft.inci2019.models.CartStore
@@ -27,32 +28,43 @@ class MainTabbedActivity : AppCompatActivity() {
         setContentView(R.layout.activity_fragment)
         setSupportActionBar(findViewById(R.id.main_toolbar))
 
-        configureReceiver()
         pagerAdapter = FragmentAdapter(this)
         viewPager = findViewById(R.id.pager)
         viewPager.adapter = pagerAdapter
         tabLayout = findViewById<TabLayout>(R.id.tab_layout)
         TabLayoutMediator(tabLayout, viewPager) { tab, position ->
-            tab.text = "OBJECT ${(position + 1)}"
+            tab.text = FragmentAdapter.TabTitles.values()[position].label
+            tab.icon = getDrawable(FragmentAdapter.TabTitles.values()[position].drawable)
         }.attach()
+
+        configureReceiver()
+        CartStore.loadItems(this)
+    }
+
+    fun updateCartBadge() {
+
+        var badge = tabLayout.getTabAt(1)?.orCreateBadge
+        badge?.number = CartStore.itemsCount
     }
 
     private fun configureReceiver() {
         val filter = IntentFilter()
-        filter.addAction(ItemsStore.ItemsLoadedAction)
+        filter.addAction(CartStore.Action.ItemsLoaded.actionName)
+        filter.addAction(CartStore.Action.ItemRemoved.actionName)
         filter.addAction(CartStore.Action.ItemAdded.actionName)
-        val receiver = TabbedActivityBroadcastReceiver()
-        LocalBroadcastManager.getInstance(this).registerReceiver(receiver, filter)
-//        registerReceiver(receiver, filter)
+        val receiver = ItemsGridBroadcastReceiver()
+        registerReceiver(receiver, filter)
     }
 
-    inner class TabbedActivityBroadcastReceiver: BroadcastReceiver() {
+    inner class ItemsGridBroadcastReceiver: BroadcastReceiver() {
         override fun onReceive(p0: Context?, p1: Intent?) {
-            if (p1!!.action == ItemsStore.ItemsLoadedAction ) {
-                pagerAdapter.notifyDataSetChanged()
-            } else if (p1!!.action == CartStore.Action.ItemAdded.actionName) {
-                Toast.makeText(p0, "Item Added", Toast.LENGTH_LONG).show()
+            if (p1!!.action == CartStore.Action.ItemsLoaded.actionName ||
+                p1!!.action == CartStore.Action.ItemRemoved.actionName ||
+                p1!!.action == CartStore.Action.ItemAdded.actionName) {
+                updateCartBadge()
             }
         }
     }
+
+
 }

@@ -2,6 +2,7 @@ package com.obsoft.inci2019.models
 
 import android.content.Context
 import android.content.Intent
+import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import org.json.JSONArray
 import org.json.JSONObject
 
@@ -9,6 +10,8 @@ import org.json.JSONObject
 object CartStore : RemoteServicesHandler {
     private var list:List<CartItem> = listOf()
     override var context: Context? = null
+    public var itemsCount : Int = 0
+        get() = list.count()
 
     enum class Action(val actionName: String, val handlerId: Int) {
         ItemsLoaded("com.obsoft.inci2019.cart.itemLoaded", 1),
@@ -36,9 +39,19 @@ object CartStore : RemoteServicesHandler {
         RemoteServices.put("https://5e8c8b85e61fbd00164aedcb.mockapi.io/api/v1/Cart/"+item.id, d,this, callerId, CartStore.Action.ItemUpdated.handlerId)
         return true
     }
+    fun loadItems(context: Context? = null, callerId: Int=0) {
+        this.context = context
+        RemoteServices.get("https://5e8c8b85e61fbd00164aedcb.mockapi.io/api/v1/Cart", this, callerId,
+            ItemsStore.ItemsLoadedHandlerId
+        )
+
+    }
 
     fun getList(context: Context? = null, callerId: Int=0) : List<CartItem> {
         this.context = context
+        if(list.isEmpty()) {
+            this.loadItems(context, callerId)
+        }
         return list
     }
 
@@ -49,13 +62,16 @@ object CartStore : RemoteServicesHandler {
     }
     fun findItemsByName(title: String) : List<CartItem> {
         return list.filter {
-            it.item.title.contains(title, ignoreCase = true)
+            it.getItem().title.contains(title, ignoreCase = true)
         }
     }
 
     override fun onFinishLoading(data: String, callerId: Int, handlerId: Int) {
         val action:String
-        if (CartStore.Action.ItemAdded.handlerId == handlerId) {
+        if (CartStore.Action.ItemsLoaded.handlerId == handlerId) {
+            updateList(data)
+            action = CartStore.Action.ItemsLoaded.actionName
+        } else if (CartStore.Action.ItemAdded.handlerId == handlerId) {
             list += parseItem(data)
             action = CartStore.Action.ItemAdded.actionName
         } else if (CartStore.Action.ItemRemoved.handlerId == handlerId) {
@@ -72,8 +88,10 @@ object CartStore : RemoteServicesHandler {
         Intent().also {
             it.setAction(action)
             it.putExtra("callerId", callerId)
-            if(this.context != null)
+            if(this.context != null) {
                 this.context!!.sendBroadcast(it)
+                LocalBroadcastManager.getInstance(this.context!!).sendBroadcast(it)
+            }
         }
 
 
@@ -81,10 +99,19 @@ object CartStore : RemoteServicesHandler {
 
     fun parseItem(data: String) : CartItem {
         val jsonObject = JSONObject(data)
-        val item = ItemsStore.findById(jsonObject.getInt("productId"))
-        return CartItem(jsonObject.getInt("id"), item, jsonObject.getInt("qty"))
+        val itemId = jsonObject.getInt("productId")
+        return CartItem(jsonObject.getInt("id"), itemId, jsonObject.getInt("qty"))
     }
 
 
+    fun updateList(data: String) {
+        val jsonArray = JSONArray(data)
+
+        for (jsonIndex in 0..(jsonArray.length() - 1)) {
+            val it = jsonArray.getJSONObject(jsonIndex)
+            val itemId = it.getInt("productId")
+            list += CartItem((it.get("id") as String).toInt(), itemId, it.getInt("qty"))
+        }
+    }
 
 }

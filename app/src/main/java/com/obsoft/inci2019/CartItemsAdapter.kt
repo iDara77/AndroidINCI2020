@@ -49,8 +49,8 @@ class CartItemsAdapter(internal var dataSet: List<CartItem>) : RecyclerView.Adap
         val index = position
         val item = dataSet[index]
 
-        titleView.text = item.item.title
-        priceView.text = item.item.price.toString()
+        titleView.text = item.getItem().title
+        priceView.text = item.getItem().price.toString()
         qtyView.text = item.qty.toString()
     }
 
